@@ -1,0 +1,3 @@
+# This is an example of how HAproxy can check which Postgres DB server is the master
+# and only direct traffic towards that server. This could be used in along with
+# keepalived and a floating IP

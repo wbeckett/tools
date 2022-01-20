@@ -1,0 +1,11 @@
+# TAGS
+TAG_PRODUCTION='1.3'
+TAG_DEVELOPMENT='1.3'
+TAG_PREP='1.3'
+
+ENVIRONMENTS=( PREP PRODUCTION DEVELOPMENT )
+
+# Branch and Repo
+BRANCH='production'
+REPO='r10k@192.168.1.80:/home/git/puppet_R10K'
+ENVS='/etc/puppetlabs/r10k/environments/'
