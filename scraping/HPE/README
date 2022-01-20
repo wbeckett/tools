@@ -1,4 +1,4 @@
-# This is a demo of a script that can be used to confirm installed
-# versions of firmware to what is avaialble on the HPE website.
-# This for example could be enhanced to store the local data in a DB 
-# which could be updated via some local discovery method.
+This is a demo of a script that can be used to confirm installed
+versions of firmware to what is avaialble on the HPE website.
+This for example could be enhanced to store the local data in a DB 
+which could be updated via some local discovery method.
