@@ -1,0 +1,9 @@
+user = 'awx'
+api_key = 'apikey'
+foreman_server = 'server_fqdn'
+CERTIFICATE_AS_STRING = """-----BEGIN CERTIFICATE-----
+-----END CERTIFICATE-----
+-----BEGIN CERTIFICATE-----
+-----END CERTIFICATE-----
+"""
+

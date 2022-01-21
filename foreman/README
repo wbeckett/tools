@@ -1,4 +1,11 @@
+update_puppet_git_environment.sh
+
 This is a demo on a script that manages Puppet environments
 that are maintained in GIT repos. The idea is you commit your changes
 to an environment, which this script will checkout into PREP. Once this has
 been tested, this script can update this to the DEV environment, and so on.
+
+pull_foreman_hosts_for_awx.py
+
+This can pull hosts located in Foreman into AWX. I've found this to be faster
+than the default method and useful when I need a quick turnaround
