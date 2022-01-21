@@ -1,5 +1,6 @@
 #!/bin/bash
 
+set -e
 
 HOST=$HAPROXY_SERVER_NAME
 PORT=$4
@@ -9,6 +10,13 @@ if [ -z $HOST ]; then
   echo "Hostname not set"
   exit 1
 fi
+
+if [ -z $PORT ]; then
+  echo "Port not set"
+  exit 1
+fi
+
+
 
 echo "Checking $HOST"
 
