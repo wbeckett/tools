@@ -1,0 +1,7 @@
+---
+
+- import_playbook: prep.yml
+- import_playbook: es.yml
+- import_playbook: mongodb.yml
+- import_playbook: loadbalancers.yml
+- import_playbook: graylog.yml

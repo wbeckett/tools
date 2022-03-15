@@ -1,0 +1,20 @@
+- hosts: "elasticsearch"
+  vars:
+    es_major_version: "7.x"
+    es_version: "7.10.2"
+    es_instance_name: "graylog"
+    es_heap_size: "1g"
+    es_config:
+      node.name: "{{ ansible_fqdn }}"
+      cluster.name: "graylog"
+      http.port: 9200
+      transport.port: 9300
+      network.host: "0.0.0.0"
+      discovery.seed_hosts: "{{ groups['elasticsearch'] | map('regex_replace', '(.*)', '\\1:9300') | join(',') }}"
+      cluster.initial_master_nodes: "{{ groups['elasticsearch'] | join (',') }}"
+    oss_version: True
+    es_action_auto_create_index: False
+
+  roles:
+    - role: "elastic.elasticsearch"
+

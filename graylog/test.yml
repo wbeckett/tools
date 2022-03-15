@@ -1,0 +1,6 @@
+- hosts: "elasticsearch"
+
+  tasks:
+
+  - debug:
+      msg: "{{ groups['elasticsearch'] |  map('regex_replace', '(.*)', 'https://\\1:8000') | join(',') }}"

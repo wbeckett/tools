@@ -1,0 +1,106 @@
+###
+# Prep work for the Elasticsearch servers
+- hosts: all
+  
+  handlers:
+  
+  - name: Restart firewalld
+    service: name=firewalld state=restarted
+  
+  tasks:
+
+  - name: Install base packages
+    yum:
+      name: '@base'
+      state: latest
+    tags:
+      - packages
+
+  - name: Install Java
+    yum:
+      name: java-17-openjdk-headless
+      state: latest
+    tags:
+      - packages
+
+  - name: Create /opt/selinux_polices
+    file:
+      path: /opt/selinux_polices
+      state: directory
+    tags:
+      - policy
+
+  - name: Copy mongo policy to /opt/selinux_polices/mongo_ftdc.te
+    copy:
+      src: files/mongo_ftdc.te
+      dest: /opt/selinux_polices/mongo_ftdc.te
+    register: policy_mongo_ftdc
+    tags:
+      - policy
+
+  - name: Generate new mongo SE mod
+    command: checkmodule -M -m -o mongo_ftdc.mod mongo_ftdc.te
+    args:
+      chdir: /opt/selinux_polices/
+    when: policy_mongo_ftdc.changed
+    tags:
+      - policy
+
+  - name: Generate new mongo SE pp
+    command:  semodule_package -o mongo_ftdc.pp -m mongo_ftdc.mod 
+    args: 
+      chdir: /opt/selinux_polices/             
+    when: policy_mongo_ftdc.changed
+    tags:
+      - policy
+
+  - name: Load new PP module
+    command:  semodule -i mongo_ftdc.pp
+    args:
+      chdir: /opt/selinux_polices/
+    when: policy_mongo_ftdc.changed
+    tags:
+      - policy
+
+  - name: Permit hosts to 9200/tcp ES
+    firewalld:
+      zone: public
+      rich_rule: rule family="ipv4" source address="{{ hostvars[ item ]['ansible_default_ipv4']['address']  }}" port protocol="tcp" port="9200" accept
+      permanent: yes
+      state: enabled
+    with_items: "{{ groups['elasticsearch'] }}"
+    when: inventory_hostname in groups['elasticsearch']
+    notify:
+      - Restart firewalld
+
+  - name: Permit hosts to 9300/tcp ES
+    firewalld:
+      zone: public
+      rich_rule: rule family="ipv4" source address="{{ hostvars[ item ]['ansible_default_ipv4']['address']  }}" port protocol="tcp" port="9300" accept
+      permanent: yes
+      state: enabled
+    with_items: "{{ groups['elasticsearch'] }}"
+    when: inventory_hostname in groups['elasticsearch']
+    notify:
+      - Restart firewalld
+
+  - name: Permit hosts to 27017/tcp Mongo
+    firewalld:
+      zone: public
+      rich_rule: rule family="ipv4" source address="{{ hostvars[ item ]['ansible_default_ipv4']['address']  }}" port protocol="tcp" port="27017" accept
+      permanent: yes
+      state: enabled
+    with_items: "{{ groups['graylog'] }}"
+    when: inventory_hostname in groups['graylog']
+    notify:
+      - Restart firewalld
+
+  - name: Permit access to port 9000/tcp on graylog servers
+    firewalld:
+      zone: public
+      port: 9000/tcp
+      permanent: yes
+      state: enabled
+    when: inventory_hostname in groups['graylog']
+    notify:
+      - Restart firewalld

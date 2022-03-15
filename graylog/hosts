@@ -1,0 +1,17 @@
+[elasticsearch]
+es01.lab
+es02.lab
+es03.lab
+es04.lab
+es05.lab
+es06.lab
+
+[graylog]
+graylog01.lab
+graylog02.lab
+graylog03.lab
+
+[loadbalancers]
+graylog01.lab
+graylog02.lab
+graylog03.lab

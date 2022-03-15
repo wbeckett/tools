@@ -1,0 +1,111 @@
+- hosts: graylog,loadbalancers
+  vars:
+    router_id: 101
+    virtual_router_id: 12
+    floating_addr: 192.168.1.10
+    interface: enp1s0
+  
+  handlers:
+  
+  - name: Restart firewalld
+    service: name=firewalld state=restarted
+ 
+  - name: Reload keepalived
+    service: name=keepalived state=reloaded
+
+  - name: Reload haproxy
+    service: name=haproxy state=reloaded
+
+
+
+  tasks:
+
+  - name: Install keepalived
+    yum:
+      name: keepalived.x86_64
+    when: inventory_hostname in groups['graylog']
+    tags:
+      - packages
+
+
+  - name: Install haproxy
+    yum:
+      name: haproxy.x86_64
+    when: inventory_hostname in groups['graylog']
+    tags:
+      - packages
+
+
+  - name: Render keepalive configuration
+    template:
+      dest: /etc/keepalived/keepalived.conf
+      src: templates/keepalived.conf.jinja
+    notify:
+      - Reload keepalived
+
+
+  - name: Render haproxy configuration
+    template:
+      dest: /etc/haproxy/haproxy.cfg
+      src: templates/haproxy.cfg.jinja
+    notify:
+      - Reload haproxy
+
+
+  - name: Allow LBs VRRP access to each other
+    firewalld:
+      zone: public
+      rich_rule: rule family="ipv4" source address="{{ hostvars[ item ]['ansible_default_ipv4']['address']  }}" protocol value="vrrp" accept
+      permanent: yes
+      state: enabled
+    with_items: "{{ groups['loadbalancers'] }}"
+    when: inventory_hostname in groups['loadbalancers']
+    notify:
+      - Restart firewalld
+
+  - name: Permit access to port 12201/tcp on graylog servers - TEST GELF
+    firewalld:
+      zone: public
+      port: 12201/tcp
+      permanent: yes
+      state: enabled
+    when: inventory_hostname in groups['graylog']
+    notify:
+      - Restart firewalld
+
+  - name: Permit access to port 11201/tcp on graylog servers - TEST GELF
+    firewalld:
+      zone: public
+      port: 11201/tcp
+      permanent: yes
+      state: enabled
+    when: inventory_hostname in groups['graylog']
+    notify:
+      - Restart firewalld
+
+
+  - name: Set sysctl for net.ipv4.ip_nonlocal_bind=1
+    sysctl:
+      name: net.ipv4.ip_nonlocal_bind
+      value: '1'
+      state: present
+      sysctl_file: /etc/sysctl.d/haproxy.conf
+
+  - name: Set SE boolean for haproxy_connect_any
+    seboolean:
+      name: haproxy_connect_any
+      state: yes
+      persistent: yes
+
+  - name: Enable and Run Keepalived service
+    service:
+      name: keepalived
+      state: started
+      enabled: yes    
+
+  - name: Enable and Run HAProxy service
+    service:
+      name: haproxy
+      state: started
+      enabled: yes
+

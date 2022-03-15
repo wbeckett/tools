@@ -1,0 +1,10 @@
+---
+roles:
+  - name: graylog2.graylog
+  - name: lean_delivery.java
+  - name: elastic.elasticsearch
+    version: v7.10.2
+
+collections:
+  - name: community.mongodb
+

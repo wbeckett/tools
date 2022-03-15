@@ -1,0 +1,36 @@
+! Configuration File for keepalived
+
+global_defs {
+   smtp_connect_timeout 30
+   router_id {{ router_id }}
+   vrrp_skip_check_adv_addr
+   vrrp_strict
+   vrrp_version 2
+}
+
+# Check if HAProxy is running
+vrrp_script check_haproxy {
+    script "killall -0 haproxy"
+    interval 2
+    weight 2
+}
+
+vrrp_instance VI_1 {
+    state MASTER
+    interface {{ interface }}
+    virtual_router_id {{ virtual_router_id }}
+    priority 100
+    advert_int 1
+    authentication {
+        auth_type PASS
+        auth_pass 1117
+    }
+    virtual_ipaddress {
+        {{ floating_addr }}
+    }
+
+    track_script {
+        check_haproxy
+    }
+}
+
