@@ -1,9 +1,4 @@
 - hosts: graylog,loadbalancers
-  vars:
-    router_id: 101
-    virtual_router_id: 12
-    floating_addr: 192.168.1.10
-    interface: enp1s0
   
   handlers:
   

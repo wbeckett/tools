@@ -7,9 +7,9 @@
     graylog_install_mongodb: False
     graylog_password_secret: "3OIVGp3B6HINjxj6bEa5vkkenq2dPX88umeLbqTlvYgVAjjJCt03rFry9DFHTe3jWeLkYHiEB9Dww499fUTWwDoRIOCnGDL0" # Insert your own here. Generate with: pwgen -s 96 1
     graylog_root_password_sha2: "b117ef94c554ede113d1296020dc9a5078826e1b27762f49fbbda8445b6a02f2" # abc1234567\n
-    graylog_http_bind_address: "{{ ansible_default_ipv4.address }}:9000"
-    graylog_http_publish_uri: "http://{{ ansible_default_ipv4.address }}:9000/"
-    graylog_http_external_uri: "http://{{ ansible_default_ipv4.address }}:9000/"
+    graylog_http_bind_address: "0.0.0.0:9000"
+    graylog_http_publish_uri: "http://{{ floating_addr }}:9000/"
+    graylog_http_external_uri: "http://{{ floating_addr }}:9000/"
 
     graylog_elasticsearch_hosts: "{{ groups['elasticsearch'] |  map('regex_replace', '(.*)', 'http://\\1:9200') | join(',') }}"
     graylog_mongodb_uri: "mongodb://{{ groups['graylog'] |  map('regex_replace', '(.*)', '\\1:27017') | join(',') }}/graylog"

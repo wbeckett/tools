@@ -1,17 +1,22 @@
+[all:vars]
+floating_addr=192.168.1.10
+router_id=101
+virtual_router_id=12
+interface=enp1s0
+
+
 [elasticsearch]
-es01.lab
-es02.lab
-es03.lab
-es04.lab
-es05.lab
-es06.lab
+es01.lab.wazzanet
+es02.lab.wazzanet
+es03.lab.wazzanet
+es04.lab.wazzanet
 
 [graylog]
-graylog01.lab
-graylog02.lab
-graylog03.lab
+graylog01.lab.wazzanet
+graylog02.lab.wazzanet
+graylog03.lab.wazzanet
 
 [loadbalancers]
-graylog01.lab
-graylog02.lab
-graylog03.lab
+graylog01.lab.wazzanet
+graylog02.lab.wazzanet
+graylog03.lab.wazzanet

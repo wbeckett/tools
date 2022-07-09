@@ -73,13 +73,24 @@
     notify:
       - Restart firewalld
 
-  - name: Permit hosts to 9300/tcp ES
+  - name: Permit ES hosts to 9300/tcp ES
     firewalld:
       zone: public
       rich_rule: rule family="ipv4" source address="{{ hostvars[ item ]['ansible_default_ipv4']['address']  }}" port protocol="tcp" port="9300" accept
       permanent: yes
       state: enabled
     with_items: "{{ groups['elasticsearch'] }}"
+    when: inventory_hostname in groups['elasticsearch']
+    notify:
+      - Restart firewalld
+
+  - name: Permit Graylog hosts to 9200/tcp ES
+    firewalld:
+      zone: public
+      rich_rule: rule family="ipv4" source address="{{ hostvars[ item ]['ansible_default_ipv4']['address']  }}" port protocol="tcp" port="9200" accept
+      permanent: yes
+      state: enabled
+    with_items: "{{ groups['graylog'] }}"
     when: inventory_hostname in groups['elasticsearch']
     notify:
       - Restart firewalld
